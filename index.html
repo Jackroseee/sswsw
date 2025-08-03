@@ -60,21 +60,11 @@
       font-size: 1.5em;
       font-weight: 600;
       box-shadow: 0 0 40px rgba(255, 255, 255, 0.6), inset 0 0 20px rgba(0, 0, 0, 0.2);
-      transition: transform 1s ease, background 0.6s ease;
+      transition: transform 0.5s ease-in-out, background 0.6s ease;
     }
 
-    .inhale { animation: inhale 4s ease-in-out forwards; }
-    .hold {}
-    .exhale { animation: exhale 8s ease-in-out forwards; }
-
-    @keyframes inhale {
-      from { transform: scale(1); }
-      to { transform: scale(1.6); }
-    }
-
-    @keyframes exhale {
-      from { transform: scale(1.6); }
-      to { transform: scale(1); }
+    .expanded {
+      transform: scale(1.6);
     }
 
     .timer {
@@ -132,9 +122,7 @@
 
     const particles = [];
     class Particle {
-      constructor() {
-        this.reset();
-      }
+      constructor() { this.reset(); }
       reset() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
@@ -158,16 +146,11 @@
     function initParticles() {
       for (let i = 0; i < 120; i++) particles.push(new Particle());
     }
-
     function animateParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
+      particles.forEach(p => { p.update(); p.draw(); });
       requestAnimationFrame(animateParticles);
     }
-
     initParticles();
     animateParticles();
 
@@ -182,11 +165,13 @@
       if (navigator.vibrate) navigator.vibrate(duration);
     }
 
-    function startPhase(duration, label, className, bgColor, nextPhase) {
+    function startPhase(duration, label, transformClass, bgColor, nextPhase, keepTransform = false) {
       circle.textContent = label;
       circle.style.background = bgColor;
-      circle.classList.remove('inhale', 'hold', 'exhale');
-      if (className) circle.classList.add(className);
+      circle.classList.remove('expanded');
+      if (transformClass === 'expand') {
+        circle.classList.add('expanded');
+      }
       timer.textContent = duration;
 
       let timeLeft = duration;
@@ -195,6 +180,7 @@
         timer.textContent = timeLeft > 0 ? timeLeft : '';
         if (timeLeft <= 0) {
           clearInterval(countdown);
+          if (!keepTransform) circle.classList.remove('expanded');
           nextPhase();
         }
       }, 1000);
@@ -203,10 +189,10 @@
     function breathingCycle() {
       if (!isRunning) return;
 
-      startPhase(4, 'Inhale', 'inhale', 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(96,165,250,0.7))', () => {
-        startPhase(7, 'Hold', 'hold', 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(250,204,21,0.7))', () => {
-          startPhase(8, 'Exhale', 'exhale', 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(34,197,94,0.7))', breathingCycle);
-        });
+      startPhase(4, 'Inhale', 'expand', 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(96,165,250,0.7))', () => {
+        startPhase(7, 'Hold', null, 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(250,204,21,0.7))', () => {
+          startPhase(8, 'Exhale', null, 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(34,197,94,0.7))', breathingCycle);
+        }, true);
       });
     }
 
@@ -220,7 +206,7 @@
       } else {
         clearInterval(countdown);
         circle.textContent = 'Inhale';
-        circle.classList.remove('inhale', 'hold', 'exhale');
+        circle.classList.remove('expanded');
         circle.style.background = 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(96,165,250,0.7))';
         timer.textContent = '4';
       }
