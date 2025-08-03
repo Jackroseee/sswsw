@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4-7-8 Breathing Exercise</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 1em;
+    }
+    #circle {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #82c4f8, #1e90ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 4s ease-in-out infinite;
+    }
+    #instructions {
+      margin-top: 2em;
+      font-size: 1.5em;
+      transition: all 0.5s ease;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <h1>4-7-8 Breathing Exercise</h1>
+  <div id="circle"></div>
+  <div id="instructions">Get Ready...</div>
+
+  <script>
+    const instructions = document.getElementById("instructions");
+    const circle = document.getElementById("circle");
+    const sequence = [
+      { action: "Inhale", duration: 4000 },
+      { action: "Hold", duration: 7000 },
+      { action: "Exhale", duration: 8000 },
+    ];
+
+    let current = 0;
+
+    function vibrate(pattern) {
+      if (navigator.vibrate) navigator.vibrate(pattern);
+    }
+
+    function cycleBreath() {
+      const step = sequence[current];
+      instructions.textContent = step.action;
+
+      if (step.action === "Inhale") {
+        circle.style.animation = `pulse ${step.duration / 1000}s ease-in-out infinite`;
+        vibrate([200, 100, 200]);
+      } else if (step.action === "Hold") {
+        circle.style.animation = "none";
+        vibrate(100);
+      } else if (step.action === "Exhale") {
+        circle.style.animation = `pulse ${step.duration / 1000}s ease-in-out infinite`;
+        vibrate([100, 200, 100]);
+      }
+
+      setTimeout(() => {
+        current = (current + 1) % sequence.length;
+        cycleBreath();
+      }, step.duration);
+    }
+
+    setTimeout(() => {
+      cycleBreath();
+    }, 1000);
+  </script>
+</body>
+</html>
