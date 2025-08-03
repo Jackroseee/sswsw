@@ -93,6 +93,7 @@
       cursor: pointer;
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
       transition: transform 0.2s, box-shadow 0.3s;
+      z-index: 2;
     }
 
     button:hover {
@@ -184,7 +185,8 @@
     function startPhase(duration, label, className, bgColor, nextPhase) {
       circle.textContent = label;
       circle.style.background = bgColor;
-      circle.className = `circle ${className}`;
+      circle.classList.remove('inhale', 'hold', 'exhale');
+      if (className) circle.classList.add(className);
       timer.textContent = duration;
 
       let timeLeft = duration;
@@ -218,7 +220,7 @@
       } else {
         clearInterval(countdown);
         circle.textContent = 'Inhale';
-        circle.className = 'circle';
+        circle.classList.remove('inhale', 'hold', 'exhale');
         circle.style.background = 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(96,165,250,0.7))';
         timer.textContent = '4';
       }
