@@ -1,250 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4-7-8 Breathing Exercise</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1e3a8a, #7c3aed);
-            color: white;
-            overflow: hidden;
-            position: relative;
-        }
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-            opacity: 0.5;
-        }
-        h1 {
-            font-size: 3em;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-            margin-bottom: 30px;
-            z-index: 2;
-        }
-        .container {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            margin-bottom: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            z-index: 2;
-        }
-        .circle {
-            width: 220px;
-            height: 220px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(96, 165, 250, 0.7));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6em;
-            font-weight: 600;
-            box-shadow: 0 0 30px rgba(96, 165, 250, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.5);
-            transition: transform 1s linear, background 0.5s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .circle::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
-            opacity: 0.5;
-        }
-        .inhale {
-            animation: inhale 4s linear forwards;
-        }
-        .hold {
-            animation: none;
-        }
-        .exhale {
-            animation: exhale 8s linear forwards;
-        }
-        @keyframes inhale {
-            from { transform: scale(1); }
-            to { transform: scale(1.6); }
-        }
-        @keyframes exhale {
-            from { transform: scale(1.6); }
-            to { transform: scale(1); }
-        }
-        .timer {
-            font-size: 1.6em;
-            font-weight: 600;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
-            max-width: 220px;
-            text-align: left;
-            z-index: 2;
-        }
-        button {
-            padding: 15px 40px;
-            font-size: 1.3em;
-            background: linear-gradient(45deg, #2563eb, #7c3aed);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(37, 99, 235, 0.7);
-            transition: box-shadow 0.3s, transform 0.2s;
-            z-index: 2;
-        }
-        button:hover {
-            box-shadow: 0 0 25px rgba(37, 99, 235, 1);
-            transform: translateY(-2px);
-        }
-        #instructions {
-            margin-top: 20px;
-            font-size: 1.2em;
-            text-align: center;
-            max-width: 600px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            z-index: 2;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4-7-8 Breathing Exercise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1e3a8a, #7c3aed);
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    h1 {
+      font-size: 3em;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+      z-index: 2;
+      margin-bottom: 30px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      z-index: 2;
+    }
+
+    .circle {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(96,165,250,0.7));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      font-weight: 600;
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.6), inset 0 0 20px rgba(0, 0, 0, 0.2);
+      transition: transform 1s ease, background 0.6s ease;
+    }
+
+    .inhale { animation: inhale 4s ease-in-out forwards; }
+    .hold {}
+    .exhale { animation: exhale 8s ease-in-out forwards; }
+
+    @keyframes inhale {
+      from { transform: scale(1); }
+      to { transform: scale(1.6); }
+    }
+
+    @keyframes exhale {
+      from { transform: scale(1.6); }
+      to { transform: scale(1); }
+    }
+
+    .timer {
+      font-size: 1.5em;
+      font-weight: 500;
+      text-shadow: 0 0 10px rgba(255,255,255,0.7);
+    }
+
+    button {
+      padding: 15px 35px;
+      font-size: 1.2em;
+      background: linear-gradient(45deg, #2563eb, #9333ea);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+    }
+
+    #instructions {
+      margin-top: 20px;
+      text-align: center;
+      max-width: 600px;
+      font-size: 1.2em;
+      line-height: 1.6;
+      z-index: 2;
+      text-shadow: 0 0 8px rgba(255,255,255,0.5);
+    }
+  </style>
 </head>
 <body>
-    <canvas id="particleCanvas"></canvas>
-    <h1>4-7-8 Breathing Exercise</h1>
-    <div class="container">
-        <div class="circle" id="circle">Inhale</div>
-        <div class="timer" id="timer">4</div>
-    </div>
-    <button id="startButton">Start Breathing</button>
-    <div id="instructions">
-        Follow the 4-7-8 breathing technique: Inhale for 4 seconds, hold for 7 seconds, exhale for 8 seconds.
-    </div>
-    <script>
-        // Particle Background
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+  <canvas id="particleCanvas"></canvas>
+  <h1>4-7-8 Breathing Exercise</h1>
+  <div class="container">
+    <div class="circle" id="circle">Inhale</div>
+    <div class="timer" id="timer">4</div>
+  </div>
+  <button id="startButton">Start Breathing</button>
+  <div id="instructions">
+    Follow the 4-7-8 breathing method: Inhale for 4 seconds, Hold for 7 seconds, and Exhale for 8 seconds. Repeat for a calm mind and body.
+  </div>
 
-        const particles = [];
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 1;
-                this.speedX = Math.random() * 0.5 - 0.25;
-                this.speedY = Math.random() * 0.5 - 0.25;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if (this.size > 0.2) this.size -= 0.01;
-                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-            }
-            draw() {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+  <script>
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+      }
+      draw() {
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      for (let i = 0; i < 120; i++) particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+
+    const circle = document.getElementById('circle');
+    const timer = document.getElementById('timer');
+    const startButton = document.getElementById('startButton');
+
+    let isRunning = false;
+    let countdown;
+
+    function vibrate(duration = 200) {
+      if (navigator.vibrate) navigator.vibrate(duration);
+    }
+
+    function startPhase(duration, label, className, bgColor, nextPhase) {
+      circle.textContent = label;
+      circle.style.background = bgColor;
+      circle.className = `circle ${className}`;
+      timer.textContent = duration;
+
+      let timeLeft = duration;
+      countdown = setInterval(() => {
+        timeLeft--;
+        timer.textContent = timeLeft > 0 ? timeLeft : '';
+        if (timeLeft <= 0) {
+          clearInterval(countdown);
+          nextPhase();
         }
+      }, 1000);
+    }
 
-        function initParticles() {
-            for (let i = 0; i < 100; i++) {
-                particles.push(new Particle());
-            }
-        }
+    function breathingCycle() {
+      if (!isRunning) return;
 
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-                if (p.size <= 0.2) {
-                    particles.splice(particles.indexOf(p), 1);
-                    particles.push(new Particle());
-                }
-            });
-            requestAnimationFrame(animateParticles);
-        }
-
-        initParticles();
-        animateParticles();
-
-        // Breathing Exercise Logic
-        const circle = document.getElementById('circle');
-        const timer = document.getElementById('timer');
-        const startButton = document.getElementById('startButton');
-        let isRunning = false;
-        let countdownInterval;
-
-        function vibrate() {
-            if ('vibrate' in navigator) {
-                navigator.vibrate(200);
-            }
-        }
-
-        function startCountdown(seconds, nextPhase, phase) {
-            let timeLeft = seconds;
-            timer.textContent = timeLeft;
-
-            countdownInterval = setInterval(() => {
-                timeLeft--;
-                timer.textContent = timeLeft > 0 ? timeLeft : '';
-                if (timeLeft < 0) {
-                    clearInterval(countdownInterval);
-                    circle.classList.remove(phase);
-                    nextPhase();
-                }
-            }, 1000);
-        }
-
-        function runBreathingCycle() {
-            if (!isRunning) return;
-
-            circle.textContent = 'Inhale';
-            circle.style.background = 'radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(96, 165, 250, 0.7))';
-            circle.classList.remove('hold', 'exhale');
-            circle.classList.add('inhale');
-            startCountdown(4, () => {
-                circle.textContent = 'Hold';
-                circle.style.background = 'radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(250, 204, 21, 0.7))';
-                circle.classList.remove('inhale');
-                circle.classList.add('hold');
-                startCountdown(7, () => {
-                    circle.textContent = 'Exhale';
-                    circle.style.background = 'radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(34, 197, 94, 0.7))';
-                    circle.classList.remove('hold');
-                    circle.classList.add('exhale');
-                    startCountdown(8, runBreathingCycle, 'exhale');
-                }, 'hold');
-            }, 'inhale');
-        }
-
-        startButton.addEventListener('click', () => {
-            vibrate();
-            isRunning = !isRunning;
-            startButton.textContent = isRunning ? 'Stop Breathing' : 'Start Breathing';
-            if (isRunning) {
-                runBreathingCycle();
-            } else {
-                clearInterval(countdownInterval);
-                circle.textContent = 'Inhale';
-                circle.style.background = 'radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(96, 165, 250, 0.7))';
-                circle.classList.remove('inhale', 'hold', 'exhale');
-                timer.textContent = '4';
-            }
+      startPhase(4, 'Inhale', 'inhale', 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(96,165,250,0.7))', () => {
+        startPhase(7, 'Hold', 'hold', 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(250,204,21,0.7))', () => {
+          startPhase(8, 'Exhale', 'exhale', 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(34,197,94,0.7))', breathingCycle);
         });
-    </script>
+      });
+    }
+
+    startButton.addEventListener('click', () => {
+      vibrate();
+      isRunning = !isRunning;
+      startButton.textContent = isRunning ? 'Stop Breathing' : 'Start Breathing';
+
+      if (isRunning) {
+        breathingCycle();
+      } else {
+        clearInterval(countdown);
+        circle.textContent = 'Inhale';
+        circle.className = 'circle';
+        circle.style.background = 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(96,165,250,0.7))';
+        timer.textContent = '4';
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
 </body>
 </html>
