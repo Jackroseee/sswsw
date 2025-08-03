@@ -29,7 +29,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: pulse 4s ease-in-out infinite;
     }
     #instructions {
       margin-top: 2em;
@@ -37,9 +36,13 @@
       transition: all 0.5s ease;
     }
 
-    @keyframes pulse {
+    @keyframes pulse-inhale {
       0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
+      100% { transform: scale(1.2); }
+    }
+
+    @keyframes pulse-exhale {
+      0% { transform: scale(1.2); }
       100% { transform: scale(1); }
     }
   </style>
@@ -69,13 +72,13 @@
       instructions.textContent = step.action;
 
       if (step.action === "Inhale") {
-        circle.style.animation = `pulse ${step.duration / 1000}s ease-in-out infinite`;
-        vibrate([200, 100, 200]);
+        circle.style.animation = `pulse-inhale ${step.duration}ms ease-in-out forwards`;
+        vibrate([300]);
       } else if (step.action === "Hold") {
         circle.style.animation = "none";
         vibrate(100);
       } else if (step.action === "Exhale") {
-        circle.style.animation = `pulse ${step.duration / 1000}s ease-in-out infinite`;
+        circle.style.animation = `pulse-exhale ${step.duration}ms ease-in-out forwards`;
         vibrate([100, 200, 100]);
       }
 
