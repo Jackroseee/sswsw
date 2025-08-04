@@ -74,9 +74,10 @@
     }
 
     .timer {
-      font-size: 1.5em;
-      font-weight: 500;
+      font-size: 2em;
+      font-weight: 600;
       text-shadow: 0 0 10px rgba(255,255,255,0.7);
+      margin: 10px 0;
     }
 
     #loopCounter {
@@ -84,6 +85,13 @@
       font-size: 1.2em;
       z-index: 2;
       text-shadow: 0 0 8px rgba(255,255,255,0.5);
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      z-index: 2;
     }
 
     button {
@@ -113,19 +121,68 @@
       z-index: 2;
       text-shadow: 0 0 8px rgba(255,255,255,0.5);
     }
+
+    .phase-indicator {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      z-index: 2;
+    }
+
+    .phase {
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: 600;
+      opacity: 0.5;
+      transition: all 0.3s ease;
+    }
+
+    .phase.active {
+      opacity: 1;
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    }
+
+    .inhale-phase {
+      background: rgba(96, 165, 250, 0.3);
+    }
+
+    .hold-phase {
+      background: rgba(250, 204, 21, 0.3);
+    }
+
+    .exhale-phase {
+      background: rgba(34, 197, 94, 0.3);
+    }
   </style>
 </head>
 <body>
   <canvas id="particleCanvas"></canvas>
   <h1>4-7-8 Breathing Exercise</h1>
+  
+  <div class="phase-indicator">
+    <div class="phase inhale-phase" id="inhaleIndicator">Inhale</div>
+    <div class="phase hold-phase" id="holdIndicator">Hold</div>
+    <div class="phase exhale-phase" id="exhaleIndicator">Exhale</div>
+  </div>
+  
   <div class="container">
-    <div class="circle" id="circle">Inhale</div>
-    <div class="timer" id="timer">4</div>
+    <div class="circle" id="circle">Ready</div>
+    <div class="timer" id="timer"></div>
     <div id="loopCounter">Cycles: 0</div>
   </div>
-  <button id="startButton">Start Breathing</button>
+  
+  <div class="controls">
+    <button id="startButton">Start</button>
+    <button id="resetButton">Reset</button>
+  </div>
+  
   <div id="instructions">
-    Follow the 4-7-8 breathing method: Inhale for 4 seconds, Hold for 7 seconds, and Exhale for 8 seconds. Repeat for a calm mind and body.
+    <p>Follow the 4-7-8 breathing technique:</p>
+    <p><strong>Inhale</strong> deeply through your nose for <strong>4 seconds</strong></p>
+    <p><strong>Hold</strong> your breath for <strong>7 seconds</strong></p>
+    <p><strong>Exhale</strong> completely through your mouth for <strong>8 seconds</strong></p>
+    <p>Repeat this cycle to reduce anxiety and promote relaxation.</p>
   </div>
 
   <script>
@@ -134,6 +191,7 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    // Particles animation
     const particles = [];
     class Particle {
       constructor() { this.reset(); }
@@ -168,37 +226,69 @@
     initParticles();
     animateParticles();
 
+    // Breathing exercise logic
     const circle = document.getElementById('circle');
     const timer = document.getElementById('timer');
     const startButton = document.getElementById('startButton');
+    const resetButton = document.getElementById('resetButton');
     const loopCounter = document.getElementById('loopCounter');
+    const inhaleIndicator = document.getElementById('inhaleIndicator');
+    const holdIndicator = document.getElementById('holdIndicator');
+    const exhaleIndicator = document.getElementById('exhaleIndicator');
 
     let isRunning = false;
     let countdown;
     let cycles = 0;
+    let currentPhase = null;
 
-    function vibrate(duration = 200) {
-      if (navigator.vibrate) navigator.vibrate(duration);
+    // Vibration pattern (short-short-long)
+    function vibrate() {
+      if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 100]);
+      }
     }
 
-    function startPhase(duration, label, transformClass, bgColor, nextPhase, keepTransform = false) {
+    function resetIndicators() {
+      inhaleIndicator.classList.remove('active');
+      holdIndicator.classList.remove('active');
+      exhaleIndicator.classList.remove('active');
+    }
+
+    function updateIndicator(phase) {
+      resetIndicators();
+      if (phase === 'inhale') inhaleIndicator.classList.add('active');
+      if (phase === 'hold') holdIndicator.classList.add('active');
+      if (phase === 'exhale') exhaleIndicator.classList.add('active');
+    }
+
+    function startPhase(duration, phase, label, transformClass, bgColor, nextPhase) {
+      currentPhase = phase;
+      updateIndicator(phase);
+      vibrate(); // Vibrate at the start of each phase
+      
       circle.textContent = label;
       circle.style.background = bgColor;
       circle.classList.remove('expanded', 'shrinking');
+      
       if (transformClass === 'expand') {
         circle.classList.add('expanded');
       } else if (transformClass === 'shrink') {
         circle.classList.add('shrinking');
       }
+      
       timer.textContent = duration;
-
       let timeLeft = duration;
+
       countdown = setInterval(() => {
         timeLeft--;
         timer.textContent = timeLeft > 0 ? timeLeft : '';
+        
+        // Vibrate when 3 seconds remain
+        if (timeLeft === 3) vibrate();
+        
         if (timeLeft <= 0) {
           clearInterval(countdown);
-          if (!keepTransform) circle.classList.remove('expanded', 'shrinking');
+          circle.classList.remove('expanded', 'shrinking');
           nextPhase();
         }
       }, 1000);
@@ -206,38 +296,58 @@
 
     function breathingCycle() {
       if (!isRunning) return;
-      cycles++;
-      loopCounter.textContent = `Cycles: ${cycles}`;
-
-      startPhase(4, 'Inhale', 'expand', 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(96,165,250,0.7))', () => {
-        startPhase(7, 'Hold', null, 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(250,204,21,0.7))', () => {
-          startPhase(8, 'Exhale', 'shrink', 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(34,197,94,0.7))', breathingCycle);
-        }, true);
-      });
+      
+      startPhase(4, 'inhale', 'Inhale', 'expand', 
+        'radial-gradient(circle, rgba(255,255,255,0.9), rgba(96,165,250,0.7))', 
+        () => {
+          startPhase(7, 'hold', 'Hold', null, 
+            'radial-gradient(circle, rgba(255,255,255,0.9), rgba(250,204,21,0.7))', 
+            () => {
+              startPhase(8, 'exhale', 'Exhale', 'shrink', 
+                'radial-gradient(circle, rgba(255,255,255,0.9), rgba(34,197,94,0.7))', 
+                () => {
+                  cycles++;
+                  loopCounter.textContent = `Cycles: ${cycles}`;
+                  breathingCycle();
+                });
+            });
+        });
     }
 
-    startButton.addEventListener('click', () => {
-      vibrate();
-      isRunning = !isRunning;
-      startButton.textContent = isRunning ? 'Stop Breathing' : 'Start Breathing';
+    function resetExercise() {
+      clearInterval(countdown);
+      isRunning = false;
+      currentPhase = null;
+      startButton.textContent = 'Start';
+      circle.textContent = 'Ready';
+      circle.classList.remove('expanded', 'shrinking');
+      circle.style.background = 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(96,165,250,0.7))';
+      timer.textContent = '';
+      resetIndicators();
+    }
 
+    function startExercise() {
       if (isRunning) {
-        breathingCycle();
+        resetExercise();
       } else {
-        clearInterval(countdown);
-        circle.textContent = 'Inhale';
-        circle.classList.remove('expanded', 'shrinking');
-        circle.style.background = 'radial-gradient(circle, rgba(255,255,255,0.9), rgba(96,165,250,0.7))';
-        timer.textContent = '4';
+        isRunning = true;
+        startButton.textContent = 'Stop';
         cycles = 0;
         loopCounter.textContent = 'Cycles: 0';
+        breathingCycle();
       }
-    });
+    }
+
+    startButton.addEventListener('click', startExercise);
+    resetButton.addEventListener('click', resetExercise);
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     });
+
+    // Initialize
+    resetExercise();
   </script>
 </body>
 </html>
